@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Issue Tracking System - Integrated Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <i class="fa-solid fa-table-cells-large brand-icon"></i>
+                <div class="brand-text">
+                    <h1>Issue Tracker</h1>
+                    <p>Project Management</p>
+                </div>
+            </div>
+            <nav class="sidebar-menu">
+                <div class="menu-item active" data-target="page-issues">
+                    <i class="fa-solid fa-circle-exclamation"></i> Issues
+                </div>
+                <div class="menu-item" data-target="page-analytics">
+                    <i class="fa-solid fa-chart-simple"></i> Analytics
+                </div>
+                <div class="menu-item" data-target="page-users">
+                    <i class="fa-solid fa-users"></i> User Management
+                </div>
+            </nav>
+            <div class="sidebar-footer">
+                <p>&copy; 2026 Issue Tracker</p>
+                <p>Software Engineering Project</p>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="main-header">
+                <div class="search-container">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" placeholder="Search issues, users, projects..." id="globalSearchInput">
+                </div>
+                <div class="user-profile">
+                    <div class="avatar">AD</div>
+                </div>
+            </header>
+
+            <div id="page-issues" class="content-page active">
+                <div class="title-section">
+                    <div class="title-left">
+                        <h2>Issue Browser</h2>
+                        <p>Track and manage all project issues in one place</p>
+                    </div>
+                    <button class="btn-action"><i class="fa-solid fa-plus"></i> New Issue</button>
+                </div>
+
+                <div class="filter-section">
+                    <span class="filter-label"><i class="fa-solid fa-filter"></i> Filters:</span>
+                    <div class="select-wrapper">
+                        <select id="filterStatus">
+                            <option value="all">All Status</option>
+                            <option value="New">New</option>
+                            <option value="Assigned">Assigned</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Resolved">Resolved</option>
+                            <option value="Closed">Closed</option>
+                        </select>
+                    </div>
+                    <div class="select-wrapper">
+                        <select id="filterPriority">
+                            <option value="all">All Priority</option>
+                            <option value="Blocker">Blocker</option>
+                            <option value="Critical">Critical</option>
+                            <option value="Major">Major</option>
+                            <option value="Minor">Minor</option>
+                            <option value="Trivial">Trivial</option>
+                        </select>
+                    </div>
+                    <div class="select-wrapper">
+                        <select id="filterAssignee">
+                            <option value="all">All Assignees</option>
+                            <option value="Unassigned">Unassigned</option>
+                            <option value="dev1">dev1</option>
+                            <option value="dev2">dev2</option>
+                            <option value="dev3">dev3</option>
+                            <option value="dev4">dev4</option>
+                            <option value="dev5">dev5</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="base-table">
+                        <thead>
+                            <tr>
+                                <th>Issue ID</th>
+                                <th>Title</th>
+                                <th>Priority</th>
+                                <th>Status</th>
+                                <th>Assignee</th>
+                                <th>Reporter</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="issueGridTableBody">
+                            </tbody>
+                    </table>
+                </div>
+                <div class="page-footer-info" id="issueTrackerFooterText">Showing 8 of 8 issues</div>
+            </div>
+
+            <div id="page-analytics" class="content-page">
+                <div class="title-section">
+                    <div class="title-left">
+                        <h2>Analytics & Metrics</h2>
+                        <p>Overview of issue tracking performance and trends</p>
+                    </div>
+                </div>
+
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-card-info">
+                            <span class="metric-card-label">Total Open Issues</span>
+                            <span class="metric-card-value">6</span>
+                            <span class="metric-card-subtext">Out of 8 total</span>
+                        </div>
+                        <div class="metric-card-icon m-red"><i class="fa-solid fa-circle-exclamation"></i></div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-card-info">
+                            <span class="metric-card-label">Resolved This Month</span>
+                            <span class="metric-card-value">2</span>
+                            <span class="metric-card-subtext sub-green"><i class="fa-solid fa-arrow-trend-up"></i> On track</span>
+                        </div>
+                        <div class="metric-card-icon m-green"><i class="fa-solid fa-circle-check"></i></div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-card-info">
+                            <span class="metric-card-label">Avg. Fix Time</span>
+                            <span class="metric-card-value">2.9 <span class="unit">days</span></span>
+                            <span class="metric-card-subtext">Per issue</span>
+                        </div>
+                        <div class="metric-card-icon m-blue"><i class="fa-regular fa-clock"></i></div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-card-info">
+                            <span class="metric-card-label">Resolution Rate</span>
+                            <span class="metric-card-value">25%</span>
+                            <span class="metric-card-subtext">Overall completion</span>
+                        </div>
+                        <div class="metric-card-icon m-purple"><i class="fa-solid fa-arrow-trend-up"></i></div>
+                    </div>
+                </div>
+
+                <div class="charts-main-grid">
+                    <div class="chart-box">
+                        <h3>Issue Trends (Last 7 Days)</h3>
+                        <div class="chart-canvas-wrapper"><canvas id="canvasTrendLine"></canvas></div>
+                    </div>
+                    <div class="chart-box">
+                        <h3>Distribution by Priority</h3>
+                        <div class="chart-canvas-wrapper flex-center"><canvas id="canvasPriorityPie"></canvas></div>
+                    </div>
+                </div>
+
+                <div class="chart-box">
+                    <h3>Issues by Assignee (Top 5)</h3>
+                    <div class="chart-canvas-wrapper wide-chart-wrapper"><canvas id="canvasAssigneeBar"></canvas></div>
+                </div>
+            </div>
+
+            <div id="page-users" class="content-page">
+                <div class="title-section">
+                    <div class="title-left">
+                        <h2>User Management</h2>
+                        <p>Manage team members and their roles</p>
+                    </div>
+                    <button class="btn-action"><i class="fa-solid fa-plus"></i> Add User</button>
+                </div>
+
+                <div class="user-summary-grid">
+                    <div class="user-count-card">
+                        <div class="user-count-info"><h4>Admin</h4><div class="count-num" id="cntAdmin">1</div></div>
+                        <span class="role-indicator-badge ri-admin">Admin</span>
+                    </div>
+                    <div class="user-count-card">
+                        <div class="user-count-info"><h4>PL</h4><div class="count-num" id="cntPL">2</div></div>
+                        <span class="role-indicator-badge ri-pl">PL</span>
+                    </div>
+                    <div class="user-count-card">
+                        <div class="user-count-info"><h4>Dev</h4><div class="count-num" id="cntDev">5</div></div>
+                        <span class="role-indicator-badge ri-dev">Dev</span>
+                    </div>
+                    <div class="user-count-card">
+                        <div class="user-count-info"><h4>Tester</h4><div class="count-num" id="cntTester">2</div></div>
+                        <span class="role-indicator-badge ri-tester">Tester</span>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="base-table">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>User ID</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userGridTableBody">
+                            </tbody>
+                    </table>
+                </div>
+                <div class="page-footer-info" id="userManagementFooterText">Total 10 users</div>
+            </div>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
