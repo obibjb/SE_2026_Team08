@@ -1,118 +1,153 @@
+package view;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.Vector;
 
-/* ==========================================================
-   1. MODEL LAYER (기존 데이터 구조 및 Mock Data 완벽 매핑)
-   ========================================================== */
-class Issue {
-    String id;
-    String title;
-    String priority;
-    String status;
-    String assignee;
-    String reporter;
-    String date;
-
-    public Issue(String id, String title, String priority, String status, String assignee, String reporter, String date) {
-        this.id = id;
-        this.title = title;
-        this.priority = priority;
-        this.status = status;
-        this.assignee = assignee;
-        this.reporter = reporter;
-        this.date = date;
-    }
-}
-
-/* ==========================================================
-   2. VIEW & CONTROLLER LAYER (Java Swing UI 구현)
-   ========================================================== */
 public class AppMainSwing extends JFrame {
 
-    // 글로벌 데이터셋 (웹 프로토타입 app.js와 100% 동일한 데이터)
-    private List<Issue> globalIssueDataset = new ArrayList<>();
-
-    // UI 컴포넌트 레퍼런스
+    private JComboBox<String> statusFilter;
+    private JComboBox<String> priorityFilter;
+    private JTextField searchField;
     private JTable issueTable;
     private DefaultTableModel tableModel;
-    private JComboBox<String> filterStatus;
-    private JComboBox<String> filterPriority;
-    private JComboBox<String> filterAssignee;
-    private JTextField searchField;
-    private JLabel footerLabel;
+    private TableRowSorter<DefaultTableModel> rowSorter;
 
     public AppMainSwing() {
-        // 데이터 초기화
-        initMockData();
-
-        // 윈도우 기본 설정
-        setTitle("Issue Tracking System - Desktop GUI (Swing)");
-        setSize(1000, 650);
+        // 메인 창 설정 및 기본 타이틀 지정
+        setTitle("Issue Tracking System - Desktop Dashboard");
+        setSize(1000, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        // 메인 레이아웃 (BorderLayout)
-        setLayout(new BorderLayout());
+        // 전체 레이아웃 서브 패널 배치
+        JPanel mainPanel = new JPanel(new BorderLayout(15, 15));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        mainPanel.setBackground(new Color(248, 250, 252)); // 웹 테마 메인 배경색 반영
 
-        // 상단 헤더 및 필터 패널 구성
-        add(createHeaderPanel(), BorderLayout.NORTH);
+        // 상단 필터 및 검색 바 영역 구성
+        JPanel topPanel = new JPanel(new GridBagLayout());
+        topPanel.setBackground(new Color(248, 250, 252));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new java.awt.Insets(0, 0, 0, 10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // 중앙 테이블 영역 구성
-        add(createTablePanel(), BorderLayout.CENTER);
+        // 콤보박스 및 입력창 UI 속성 공통 적용
+        statusFilter = new JComboBox<>(new String[]{"All Status", "NEW", "ASSIGNED", "FIXED", "RESOLVED", "CLOSED", "REOPENED"});
+        priorityFilter = new JComboBox<>(new String[]{"All Priority", "BLOCKER", "CRITICAL", "MAJOR", "MINOR", "TRIVIAL"});
+        searchField = new JTextField(20);
 
-        // 하단 푸터 패널 구성
-        add(createFooterPanel(), BorderLayout.SOUTH);
+        Dimension compSize = new Dimension(150, 35);
+        statusFilter.setPreferredSize(compSize);
+        priorityFilter.setPreferredSize(compSize);
+        searchField.setPreferredSize(new Dimension(250, 35));
 
-        // 최초 데이터 로드
-        updateTableGrid(globalIssueDataset);
+        // 컴포넌트 순차 배치
+        gbc.gridx = 0; topPanel.add(statusFilter, gbc);
+        gbc.gridx = 1; topPanel.add(priorityFilter, gbc);
+        gbc.gridx = 2; gbc.weightx = 1.0; topPanel.add(searchField, gbc);
+
+        mainPanel.add(topPanel, BorderLayout.NORTH);
+
+        // 테이블 컬럼 헤더 정의
+        String[] columns = {"Issue ID", "Title", "Priority", "Status", "Assignee", "Reporter", "Date"};
+        tableModel = new DefaultTableModel(columns, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // 셀 더블클릭 수정 금지 설정
+            }
+        };
+
+        issueTable = new JTable(tableModel);
+        rowSorter = new TableRowSorter<>(tableModel);
+        issueTable.setRowSorter(rowSorter);
+
+        // 테이블 내부 세부 디자인 다듬기
+        issueTable.setRowHeight(30);
+        issueTable.setFont(new Font("SansSerif", Font.PLAIN, 13));
+        issueTable.getTableHeader().setFont(new Font("SansSerif", Font.BOLD, 13));
+        issueTable.getTableHeader().setBackground(new Color(30, 41, 59)); // 웹 테마 네이비 컬러 매핑
+        issueTable.getTableHeader().setForeground(Color.WHITE);
+        issueTable.setGridColor(new Color(226, 232, 240));
+
+        JScrollPane scrollPane = new JScrollPane(issueTable);
+        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(226, 232, 240)));
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
+
+        // 연동 전 임시 샘플 데이터 세팅
+        initMockData();
+
+        // 실시간 필터 및 검색 이벤트 핸들러 연결
+        statusFilter.addActionListener(e -> performLiveSearchAndFiltering());
+        priorityFilter.addActionListener(e -> performLiveSearchAndFiltering());
+        searchField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                performLiveSearchAndFiltering();
+            }
+        });
+
+        add(mainPanel);
     }
 
+    // 소민이 웹 UI(app.js)의 기본 데이터셋 구조와 동일하게 매핑
     private void initMockData() {
-        globalIssueDataset.add(new Issue("ISSUE-001", "로그인 화면에서 비밀번호 찾기 버튼이 작동하지 않음", "Blocker", "New", "Unassigned", "tester1", "5/27/2026"));
-        globalIssueDataset.add(new Issue("ISSUE-002", "대시보드 차트 렌더링 성능 저하", "Critical", "Assigned", "dev2", "pl1", "5/26/2026"));
-        globalIssueDataset.add(new Issue("ISSUE-003", "알림 이메일이 중복 발송됨", "Major", "In Progress", "dev5", "tester2", "5/25/2026"));
-        globalIssueDataset.add(new Issue("ISSUE-004", "모바일 화면에서 네비게이션 메뉴가 잘림", "Minor", "Resolved", "dev1", "tester1", "5/24/2026"));
-        globalIssueDataset.add(new Issue("ISSUE-005", "검색 기능에서 특수문자 입력 시 오류 발생", "Major", "Assigned", "dev3", "tester2", "5/27/2026"));
-        globalIssueDataset.add(new Issue("ISSUE-006", "프로필 이미지 업로드 제한 없음", "Minor", "New", "Unassigned", "pl2", "5/27/2026"));
-        globalIssueDataset.add(new Issue("ISSUE-007", "다국어 지원 시 일부 텍스트가 번역되지 않음", "Trivial", "Closed", "dev4", "tester1", "5/20/2026"));
-        globalIssueDataset.add(new Issue("ISSUE-008", "데이터 익스포트 기능이 CSV 형식을 지원하지 않음", "Minor", "Assigned", "dev2", "pl1", "5/26/2026"));
+        tableModel.addRow(new Object[]{"ISSUE-001", "로그인 화면에서 비밀번호 찾기 버튼이 작동하지 않음", "BLOCKER", "NEW", "Unassigned", "tester1", "5/27/2026"});
+        tableModel.addRow(new Object[]{"ISSUE-002", "대시보드 차트 렌더링 성능 저하", "CRITICAL", "ASSIGNED", "dev2", "pl1", "5/26/2026"});
+        tableModel.addRow(new Object[]{"ISSUE-003", "알림 설정 저장 시 간헐적 튕김 현상 발생", "MAJOR", "FIXED", "dev1", "tester3", "5/25/2026"});
+        tableModel.addRow(new Object[]{"ISSUE-004", "모바일 뷰에서 사이드바 메뉴 겹침 문제", "MINOR", "RESOLVED", "dev5", "tester2", "5/24/2026"});
+        tableModel.addRow(new Object[]{"ISSUE-005", "오타 수정: 설정 페이지 '알림' 표기 오류", "TRIVIAL", "CLOSED", "dev3", "pl2", "5/23/2026"});
     }
 
-    private JPanel createHeaderPanel() {
-        JPanel headerPanel = new JPanel();
-        headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.Y_AXIS));
-        headerPanel.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
-        headerPanel.setBackground(new Color(248, 250, 252)); // var(--bg-main) 매핑
+    // 다중 조건 정규식 기반 동적 필터링 처리
+    private void performLiveSearchAndFiltering() {
+        String selectedStatus = (String) statusFilter.getSelectedItem();
+        String selectedPriority = (String) priorityFilter.getSelectedItem();
+        String searchText = searchField.getText().trim();
 
-        // 타이틀 영역
-        JPanel titlePanel = new JPanel(new BorderLayout());
-        titlePanel.setOpaque(false);
-        JLabel titleLabel = new JLabel("Issue Browser");
-        titleLabel.setFont(new Font("Inter", Font.BOLD, 22));
-        titleLabel.setForeground(new Color(15, 23, 42));
-        JLabel subLabel = new JLabel("Track and manage all project issues in desktop interface");
-        subLabel.setFont(new Font("Inter", Font.PLAIN, 12));
-        subLabel.setForeground(new Color(100, 116, 139));
+        Vector<RowFilter<Object, Object>> filters = new Vector<>();
 
-        titlePanel.add(titleLabel, BorderLayout.NORTH);
-        titlePanel.add(subLabel, BorderLayout.SOUTH);
+        // 상태값 필터 검사
+        if (selectedStatus != null && !selectedStatus.equals("All Status")) {
+            filters.add(RowFilter.regexFilter("^" + selectedStatus + "$", 3));
+        }
 
-        // 신규 이슈 버튼 (우측 배치)
-        JButton btnNewIssue = new JButton("+ New Issue");
-        btnNewIssue.setBackground(new Color(15, 23, 42));
-        btnNewIssue.setForeground(Color.WHITE);
-        btnNewIssue.setFocusPainted(false);
-        titlePanel.add(btnNewIssue, BorderLayout.EAST);
+        // 우선순위 필터 검사
+        if (selectedPriority != null && !selectedPriority.equals("All Priority")) {
+            filters.add(RowFilter.regexFilter("^" + selectedPriority + "$", 2));
+        }
 
-        // 필터 및 검색 바 영역
-        JPanel filterBar = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
-        filterBar.setOpaque(false);
-        filterBar.setBorder(BorderFactory.createTitledBorder("Filters & Live Search"));
+        // 텍스트 검색 검사 (전체 컬럼 대상 타겟팅)
+        if (!searchText.isEmpty()) {
+            filters.add(RowFilter.regexFilter("(?i)" + searchText));
+        }
 
+        // 최종 필터 융합 및 테이블 업데이트
+        if (filters.isEmpty()) {
+            rowSorter.setRowFilter(null);
+        } else {
+            rowSorter.setRowFilter(RowFilter.andFilter(filters));
+        }
+    }
+
+    public static void main(String[] args) {
+        // OS별 컴포넌트 스타일 룩앤필 동기화 처리
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // 메인 GUI 쓰레드 구동
+        SwingUtilities.invokeLater(() -> {
+            new AppMainSwing().setVisible(true);
+        });
+    }
+}
         searchField = new JTextField(15);
         filterStatus = new JComboBox<>(new String[]{"All Status", "New", "Assigned", "In Progress", "Resolved", "Closed"});
         filterPriority = new JComboBox<>(new String[]{"All Priority", "Blocker", "Critical", "Major", "Minor", "Trivial"});
