@@ -1,0 +1,140 @@
+/* 기본 초기화 및 글로벌 테마 정의 */
+:root {
+    --bg-sidebar: #1e293b;
+    --bg-main: #f8fafc;
+    --primary-blue: #2563eb;
+    --text-main: #334155;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-family); color: var(--text-main); background-color: var(--bg-main); overflow-x: hidden; }
+.app-container { display: flex; min-height: 100vh; }
+
+/* -------------------------------------------
+   글로벌 레이아웃 컴포넌트 (사이드바 & 헤더)
+   ------------------------------------------- */
+.sidebar { width: 260px; background-color: var(--bg-sidebar); color: #ffffff; display: flex; flex-direction: column; padding: 24px 0; flex-shrink: 0; }
+.sidebar-brand { display: flex; align-items: center; padding: 0 24px; margin-bottom: 32px; }
+.brand-icon { font-size: 24px; color: #3b82f6; margin-right: 12px; }
+.brand-text h1 { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; }
+.brand-text p { font-size: 11px; color: #94a3b8; }
+.sidebar-menu { display: flex; flex-direction: column; gap: 4px; padding: 0 12px; flex-grow: 1; }
+
+.menu-item { 
+    display: flex; align-items: center; padding: 12px 16px; color: #cbd5e1; 
+    text-decoration: none; font-size: 14px; font-weight: 500; border-radius: 8px; transition: all 0.2s; cursor: pointer;
+}
+.menu-item i { margin-right: 12px; font-size: 16px; width: 20px; }
+.menu-item:hover { background-color: rgba(255, 255, 255, 0.05); color: #ffffff; }
+.menu-item.active { background-color: var(--primary-blue); color: #ffffff; }
+.sidebar-footer { padding: 0 24px; font-size: 11px; color: #64748b; line-height: 1.5; }
+
+.main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: #f8fafc; }
+.main-header { height: 70px; background-color: #ffffff; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; padding: 0 40px; }
+.search-container { display: flex; align-items: center; background-color: #f1f5f9; border: 1px solid var(--border-color); border-radius: 8px; padding: 8px 16px; width: 480px; }
+.search-icon { color: var(--text-muted); margin-right: 10px; font-size: 14px; }
+.search-container input { border: none; background: transparent; width: 100%; outline: none; font-size: 14px; color: var(--text-main); }
+.avatar { width: 36px; height: 36px; background-color: #2563eb; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; }
+
+/* 뷰 레이어 공통 모듈 및 라우팅 효과 */
+.content-page { padding: 40px; display: none; flex-direction: column; gap: 24px; }
+.content-page.active { display: flex; animation: fadeIn 0.35s ease-out forwards; }
+.title-section { display: flex; justify-content: space-between; align-items: flex-start; }
+.title-left h2 { font-size: 24px; font-weight: 700; color: #0f172a; margin-bottom: 4px; }
+.title-left p { font-size: 14px; color: var(--text-muted); }
+.btn-action { background-color: #0f172a; color: #ffffff; border: none; padding: 10px 18px; font-size: 14px; font-weight: 600; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+.btn-action:hover { background-color: #1e293b; }
+
+/* -------------------------------------------
+   공통 데이터 테이블 시스템 디자인
+   ------------------------------------------- */
+.table-container { background: white; border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; }
+.base-table { width: 100%; border-collapse: collapse; text-align: left; }
+.base-table th { background-color: #ffffff; padding: 14px 24px; font-size: 13px; font-weight: 600; color: #0f172a; border-bottom: 1px solid var(--border-color); }
+.base-table td { padding: 16px 24px; font-size: 14px; color: var(--text-main); border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+.base-table tbody tr:last-child td { border-bottom: none; }
+.page-footer-info { font-size: 13px; color: var(--text-muted); padding: 8px 4px; }
+
+/* -------------------------------------------
+   화면 1: ISSUES 전용 필터 & 배지 컴포넌트
+   ------------------------------------------- */
+.filter-section { display: flex; align-items: center; gap: 12px; background: white; padding: 16px 24px; border: 1px solid var(--border-color); border-radius: 12px; }
+.filter-label { font-size: 14px; font-weight: 600; color: var(--text-main); display: flex; align-items: center; gap: 6px; margin-right: 8px; }
+.select-wrapper { position: relative; }
+.filter-section select { appearance: none; -webkit-appearance: none; background-color: #f1f5f9; border: 1px solid var(--border-color); padding: 8px 36px 8px 16px; font-size: 13px; font-weight: 500; color: #334155; border-radius: 8px; outline: none; cursor: pointer; min-width: 140px; }
+.select-wrapper::after { content: '\f107'; font-family: 'Font Awesome 6 Free'; font-weight: 900; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-size: 12px; color: #64748b; pointer-events: none; }
+.issue-link { color: #2563eb; text-decoration: none; font-weight: 500; }
+.issue-link:hover { text-decoration: underline; }
+
+/* 테마 맞춤 배지 라이브러리 */
+.badge { display: inline-block; padding: 4px 10px; font-size: 12px; font-weight: 600; border-radius: 6px; text-align: center; }
+.badge.blocker { background-color: #fee2e2; color: #ef4444; }
+.badge.critical { background-color: #ffedd5; color: #f97316; }
+.badge.major { background-color: #fef9c3; color: #ca8a04; }
+.badge.minor { background-color: #e0f2fe; color: #0284c7; }
+.badge.trivial { background-color: #f1f5f9; color: #64748b; }
+
+.badge-st { display: inline-block; padding: 4px 10px; font-size: 12px; font-weight: 500; border-radius: 12px; text-align: center; }
+.badge-st.new { background-color: #f3e8ff; color: #a855f7; }
+.badge-st.assigned { background-color: #dbeafe; color: #2563eb; }
+.badge-st.inprogress { background-color: #e0fecb; color: #16a34a; }
+.badge-st.resolved { background-color: #dcfce7; color: #22c55e; }
+.badge-st.closed { background-color: #f1f5f9; color: #475569; }
+.text-unassigned { color: #94a3b8; font-style: italic; }
+
+/* -------------------------------------------
+   화면 2: ANALYTICS 전용 대시보드 및 차트 박스
+   ------------------------------------------- */
+.metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.metric-card { background-color: #ffffff; border: 1px solid var(--border-color); border-radius: 12px; padding: 24px; display: flex; justify-content: space-between; align-items: center; }
+.metric-card-info { display: flex; flex-direction: column; }
+.metric-card-label { font-size: 13px; font-weight: 500; color: var(--text-muted); margin-bottom: 8px; }
+.metric-card-value { font-size: 28px; font-weight: 700; color: #0f172a; line-height: 1; margin-bottom: 6px; }
+.metric-card-subtext { font-size: 12px; color: var(--text-muted); }
+.metric-card-subtext.sub-green { color: #16a34a; font-weight: 500; }
+.metric-card-icon { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+
+.m-red { background-color: #fee2e2; color: #ef4444; }
+.m-green { background-color: #dcfce7; color: #22c55e; }
+.m-blue { background-color: #e0f2fe; color: #3b82f6; }
+.m-purple { background-color: #f3e8ff; color: #a855f7; }
+
+.charts-main-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 24px; }
+.chart-box { background: #ffffff; border: 1px solid var(--border-color); border-radius: 12px; padding: 24px; }
+.chart-box h3 { font-size: 15px; font-weight: 600; color: #1e293b; margin-bottom: 20px; }
+.chart-canvas-wrapper { position: relative; width: 100%; height: 260px; }
+.chart-canvas-wrapper.flex-center { display: flex; justify-content: center; align-items: center; }
+.wide-chart-wrapper { height: 280px; }
+
+/* -------------------------------------------
+   화면 3: USER MANAGEMENT 전용 요약 카드 & 액션 버튼
+   ------------------------------------------- */
+.user-summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.user-count-card { background-color: #ffffff; border: 1px solid var(--border-color); border-radius: 12px; padding: 20px 24px; display: flex; justify-content: space-between; align-items: flex-start; }
+.user-count-info h4 { font-size: 14px; font-weight: 500; color: var(--text-muted); margin-bottom: 12px; }
+.user-count-info .count-num { font-size: 28px; font-weight: 700; color: #0f172a; }
+.role-indicator-badge { padding: 4px 10px; font-size: 11px; font-weight: 600; border-radius: 8px; }
+
+.ri-admin { background-color: #f3e8ff; color: #a855f7; }
+.ri-pl { background-color: #dbeafe; color: #2563eb; }
+.ri-dev { background-color: #e0fecb; color: #16a34a; }
+.ri-tester { background-color: #ffedd5; color: #f97316; }
+
+.user-meta-cell { display: flex; align-items: center; gap: 12px; }
+.user-avatar-mini { width: 32px; height: 32px; background-color: #e2e8f0; color: #475569; font-weight: 600; font-size: 13px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+.user-avatar-mini.av-blue { background-color: #dbeafe; color: #2563eb; }
+.user-avatar-mini.av-green { background-color: #e0fecb; color: #16a34a; }
+.user-avatar-mini.av-orange { background-color: #ffedd5; color: #f97316; }
+.user-avatar-mini.av-purple { background-color: #f3e8ff; color: #a855f7; }
+
+.email-link { color: var(--text-muted); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+.action-button-group { display: flex; gap: 8px; }
+.btn-table-edit { background: white; border: 1px solid var(--border-color); border-radius: 6px; padding: 6px 12px; font-size: 13px; font-weight: 500; color: #334155; cursor: pointer; }
+.btn-table-edit:hover { background-color: #f1f5f9; }
+.btn-table-remove { background: white; border: 1px solid transparent; border-radius: 6px; padding: 6px 12px; font-size: 13px; font-weight: 500; color: #ef4444; cursor: pointer; }
+.btn-table-remove:hover { background-color: #fee2e2; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
