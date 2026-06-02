@@ -7,7 +7,7 @@ It is intentionally small for a university software engineering project.
 How to run:
 1. Open terminal in this folder.
 2. Compile:
-   javac -encoding UTF-8 -d out src/issuetracker/*.java
+   javac -encoding UTF-8 -d out controller/*.java model/*.java view/*.java
 3. Run:
    java -cp out issuetracker.Main
 4. Open browser:
@@ -40,3 +40,5 @@ Design explanation:
 The UI is separated from the backend. The browser communicates with Java through API endpoints.
 The service class contains application logic, while model classes store data.
 This is simpler than a full enterprise architecture, but still supports MVC-style separation for the project report.
+
+fix: 실제 폴더 구조에 맞게 컴파일 명령어 경로 수정
