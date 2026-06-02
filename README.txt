@@ -7,7 +7,7 @@ It is intentionally small for a university software engineering project.
 How to run:
 1. Open terminal in this folder.
 2. Compile:
-   javac -encoding UTF-8 -d out controller/*.java model/*.java view/*.java
+   javac -encoding UTF-8 -d out issuetracker/*.java view/*.java
 3. Run:
    java -cp out issuetracker.Main
 4. Open browser:
