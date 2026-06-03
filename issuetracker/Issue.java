@@ -37,6 +37,12 @@ public class Issue {
         this.date = date;
     }
 
+    public Issue(String id, String title, String description, String priority, String status, String assignee, String reporter, String fixer, String date) {
+        this(id, title, description, priority, status, assignee, reporter);
+        this.fixer = fixer;
+        this.date = date;
+    }
+
     public Issue(String... args) {
         if (args.length > 0) this.id = args[0];
         if (args.length > 1) this.title = args[1];
@@ -45,7 +51,13 @@ public class Issue {
         if (args.length > 4) this.status = args[4];
         if (args.length > 5) this.assignee = args[5];
         if (args.length > 6) this.reporter = args[6];
-        if (args.length > 7) this.date = args[7];
+        
+        if (args.length == 8) {
+            this.date = args[7];
+        } else if (args.length >= 9) {
+            this.fixer = args[7];
+            this.date = args[8];
+        }
     }
 
     public String getId() { return id; }
