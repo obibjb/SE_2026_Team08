@@ -41,4 +41,3 @@ The UI is separated from the backend. The browser communicates with Java through
 The service class contains application logic, while model classes store data.
 This is simpler than a full enterprise architecture, but still supports MVC-style separation for the project report.
 
-fix: 실제 폴더 구조에 맞게 컴파일 명령어 경로 수정
