@@ -1,9 +1,14 @@
 package issuetracker;
+import java.io.Serializable;
 
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.List;
+import java.util.ArrayList;
 
-public class Issue {
+public class Issue implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
     public String id;
     public String title;
     public String description;
@@ -16,6 +21,7 @@ public class Issue {
 
     public List<Comment> comments = new ArrayList<>();
 
+
     public Issue() {}
 
     public Issue(String id, String title, String description, String priority, String status, String assignee) {
@@ -25,6 +31,7 @@ public class Issue {
         this.priority = priority;
         this.status = status;
         this.assignee = assignee;
+
     }
 
     public Issue(String id, String title, String description, String priority, String status, String assignee, String reporter) {
