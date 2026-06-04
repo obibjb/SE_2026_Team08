@@ -159,4 +159,12 @@ public class IssueTrackerService {
     private String defaultValue(String value, String fallback) {
         return value == null || value.isBlank() ? fallback : value;
     }
+    private static IssueTrackerService instance;
+
+    public static IssueTrackerService getInstance() {
+        if (instance == null) {
+            instance = new IssueTrackerService();
+        }
+        return instance;
+    }
 }
