@@ -16,20 +16,19 @@ public class IssueTrackerServiceTest {
 
     @BeforeEach
     void setUp() {
-        // 테스트 실행 전 싱글톤 서비스 인스턴스를 초기화합니다.
         service = IssueTrackerService.getInstance();
+
+        // 검색 테스트를 위해 "로그인"이라는 단어가 들어간 이슈를 생성합니다.
+        service.createIssue("로그인 문제 발생", "내용", "Major", "Reporter");
     }
 
     @Test
     @DisplayName("결함 상태(Status) 필터링 단위 테스트")
     void testFilterByStatus() {
-        // 1. Given (테스트 준비: 서비스 객체 상태 확인)
         assertNotNull(service, "IssueTrackerService 인스턴스가 존재해야 합니다.");
 
-        // 2. When (테스트 실행: "New" 상태의 결함만 필터링 조회)
         List<Issue> newIssues = service.getIssues("New", "All Priority", "All Assignees", "");
 
-        // 3. Then (결과 검증: 반환된 모든 결함의 상태가 "New"인지 확인)
         assertNotNull(newIssues, "반환된 리스트는 null이 아니어야 합니다.");
         for (Issue issue : newIssues) {
             assertEquals("New", issue.getStatus(), "필터링된 결함의 상태는 반드시 'New'여야 합니다.");
@@ -39,20 +38,17 @@ public class IssueTrackerServiceTest {
     @Test
     @DisplayName("키워드 기반 결함 검색 단위 테스트")
     void testSearchByKeyword() {
-        // 1. Given (테스트 준비)
+        // 1. Given: "로그인"이라는 키워드를 준비
         String keyword = "로그인";
 
-        // 2. When (테스트 실행: "로그인" 키워드로 검색어 필터링)
-        List<Issue> searchedIssues = service.getIssues("All Status", "All Priority", "All Assignees", keyword);
+        // 2. When: "all" 필터를 사용해 모든 이슈 대상에서 검색
+        List<Issue> searchedIssues = service.getIssues("all", "all", "all", keyword);
 
-        // 3. Then (결과 검증: 검색된 이슈의 제목에 키워드가 포함되어 있는지 확인)
-        assertFalse(searchedIssues.isEmpty(), "검색어에 매칭되는 결함이 최소 1개 이상 존재해야 합니다.");
+        // 3. Then
+        assertFalse(searchedIssues.isEmpty(), "검색어 '로그인'에 매칭되는 결함이 최소 1개 이상 있어야 합니다.");
+
         for (Issue issue : searchedIssues) {
-            boolean containsInTitle = issue.getTitle() != null && issue.getTitle().contains(keyword);
-            boolean containsInId = issue.getId() != null && issue.getId().contains(keyword);
-            
-            assertTrue(containsInTitle || containsInId, 
-                "검색 결과로 나온 결함은 제목이나 ID에 '로그인'이라는 키워드를 포함해야 합니다.");
+            assertTrue(issue.getTitle().contains(keyword), "검색 결과 제목에 '로그인'이 포함되어야 합니다.");
         }
     }
 
