@@ -31,6 +31,21 @@ Included features
 - 결함 조건별 실시간 복합 필터링(UC-2), 상세 및 댓글 조회(UC-6), 상태 변경(UC-3) 기능
 - 시스템 주요 성능 및 해결률 요약 데이터 산출 기능 (statisticsJson)
 
+Testing and Verification
+------------------------
+- JUnit 5 기반의 단위 테스트(IssueTrackerServiceTest.java)를 통해 핵심 비즈니스 로직의 정합성을 검증하였습니다.
+  - 결함 상태(Status) 필터링 단위 테스트
+  - 키워드 기반 결함 검색 단위 테스트
+  - 결함 담당자 배정 및 데이터 정합성 검증 테스트
+- 모든 단위 테스트는 통과(Success) 상태임을 보장합니다.
+
+실행 환경 안내
+--------------
+- 본 프로젝트는 IntelliJ IDEA 환경에서 최적화되어 있습니다.
+- 프로젝트를 불러온 후, [File > Project Structure > Project > SDK]에서 교수님 PC에 설치된 JDK 버전을 설정해 주십시오.
+- 테스트 코드 실행은 IssueTrackerServiceTest.java를 우클릭하여 'Run'을 선택하시면 됩니다.
+- data.ser 파일은 프로그램 실행 시 자동으로 생성되므로, 최초 구동 시에는 존재하지 않아도 무방합니다.
+
 Project structure
 -----------------
 - issuetracker/User.java                - 사용자 도메인 모델 엔티티
