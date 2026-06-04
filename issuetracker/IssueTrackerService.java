@@ -88,14 +88,14 @@ public class IssueTrackerService {
         String id = String.format("ISSUE-%03d", nextIssueNumber++);
         Issue issue = new Issue(id, title, description, defaultValue(priority, "Major"), "New", "Unassigned", defaultValue(reporter, "tester1"), "", LocalDate.now().toString());
         issues.add(issue);
-        saveData(); // 상태 변경 시 파일 저장 트리거
+        saveData(); 
         return issue;
     }
 
     public User createUser(String id, String name, String email, String role) {
         User user = new User(id, name, email, role);
         users.add(user);
-        saveData(); // 유저 생성 시 파일 저장 트리거
+        saveData(); 
         return user;
     }
 
@@ -104,7 +104,7 @@ public class IssueTrackerService {
         issue.assignee = devId;
         issue.status = "Assigned";
         if (comment != null && !comment.isBlank()) addComment(issueId, plId, comment);
-        saveData(); // 담당자 배정 시 파일 저장 트리거
+        saveData(); 
         return issue;
     }
 
@@ -113,14 +113,14 @@ public class IssueTrackerService {
         issue.status = status;
         if ("Fixed".equalsIgnoreCase(status)) issue.fixer = userId;
         if (comment != null && !comment.isBlank()) addComment(issueId, userId, comment);
-        saveData(); // 상태 변경 시 파일 저장 트리거
+        saveData(); 
         return issue;
     }
 
     public Issue addComment(String issueId, String authorId, String content) {
         Issue issue = findIssue(issueId);
         issue.comments.add(new Comment(authorId, content, java.time.LocalDateTime.now().toString()));
-        saveData(); // 댓글 추가 시 파일 저장 트리거
+        saveData(); 
         return issue;
     }
 
